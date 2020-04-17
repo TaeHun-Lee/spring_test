@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +39,59 @@ public class HomeController {
 		return "home";
 	}
 	
-	@RequestMapping(value="/signIn", method=RequestMethod.POST)
-	public String signIn(User user) {
-		userService.userSignIn(user);
+	public boolean isUserSignedIn(HttpSession session) {
+		boolean isSigned = false;
+		User user = (User)session.getAttribute("signedUser");
+		if(user != null) isSigned = true;
+		return isSigned;
+	}
+	
+	@RequestMapping(value="/userSignIn", method=RequestMethod.POST)
+	public String userSignIn(User user, HttpSession session) {
+		if(isUserSignedIn(session)) return "signInError";
+		User signingUser = userService.userSignIn(user);
+		if(signingUser != null) {
+			session.setAttribute("signedUser", signingUser);
+		}
 		return "redirect:/";
 	}
 	
+	@RequestMapping(value="/userSignUp", method=RequestMethod.POST)
+	public String userSignUp(User user, HttpSession session) {
+		if(isUserSignedIn(session)) return "alreadySigned";
+		boolean result = userService.userSignUp(user);
+		if(result) {
+			User signingUser = userService.userSignIn(user);
+			if(signingUser != null) {
+				session.setAttribute("signedUser", signingUser);
+				return "redirect:/";
+			}
+			else {
+				return "signInError";
+			}
+		}
+		else
+			return "signUpError";
+	}
+	
+	@RequestMapping(value="/userModify", method=RequestMethod.POST)
+	public String userModify(User user) {
+		boolean result = userService.userModify(user);
+		if(result == false) return "userModifyingError";
+		return "redirect:/";
+	}
+	
+	@RequestMapping(value="/userDelete", method=RequestMethod.POST)
+	public String userDelete(User user) {
+		boolean result = userService.userDelete(user);
+		if(result == false) return "userDeleteError";
+		return "redirect:/";
+	}
+	
+	@RequestMapping(value="/userSignOut")
+	public String userSignOut(HttpSession session) {
+		boolean isUserSigned = isUserSignedIn(session);
+		if(isUserSigned) session.invalidate();
+		return "redirect:/";
+	}
 }

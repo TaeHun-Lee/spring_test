@@ -11,12 +11,14 @@
 	Hello world!  
 </h1>
 <P>  The time on the server is ${serverTime}. </P>
-<form action="signIn" method="POST">
-	<input type="text" name="userId" value="계정명">
-	<input type="password" name="userPw" value="비밀번호">
-	<input type="email" name="userEmail" value="계정메일">
-	<input type="text" name="userAdd" value="계정주소">
-	<input type="submit" value="제출">
-</form>
+<%
+	HttpSession session = request.getSession();
+	Object obj = session.getAttribute("signedUser");
+%>
+<%= obj %>
+<jsp:include page="userSignInForm.jsp"></jsp:include>
+<jsp:include page="userSignUpForm.jsp"></jsp:include>
+<jsp:include page="userModifyForm.jsp"></jsp:include>
+<a href="userSignOut">로그아웃</a>
 </body>
 </html>
