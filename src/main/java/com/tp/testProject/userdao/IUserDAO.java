@@ -3,13 +3,13 @@ package com.tp.testProject.userdao;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.tp.testProject.user.User;
+import com.tp.testProject.userDTO.UserDTO;
 
 public interface IUserDAO {
-	boolean checkUserInstance(final User user);
-	boolean insertUser(final User user);
-	boolean updateUser(final User user);
-	boolean deleteUser(final User user);
-	User selectUser(final String userId, final String userPw);
-	ArrayList<User> selectMultipleUser(final List<String> userIds);
+	boolean checkUserInstance(final UserDTO user);
+	boolean insertUser(final UserDTO user);
+	boolean updateUser(final UserDTO user);
+	boolean deleteUser(final UserDTO user);
+	UserDTO selectUser(final String userId, final String userPw);
+	ArrayList<UserDTO> selectMultipleUser(final List<String> userIds);
 }

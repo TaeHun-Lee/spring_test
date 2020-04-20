@@ -1,8 +1,8 @@
-package com.tp.testProject.user;
+package com.tp.testProject.userDTO;
 
 import java.sql.Date;
 
-public class User implements IUser {
+public class UserDTO implements IUserDTO {
 	
 	private String userId;
 	private String userPw;
@@ -10,7 +10,7 @@ public class User implements IUser {
 	private String userAdd;
 	private Date userSignedDate;
 	
-	public User() {
+	public UserDTO() {
 		this.userSignedDate = new Date(new java.util.Date().getTime());
 	}
 

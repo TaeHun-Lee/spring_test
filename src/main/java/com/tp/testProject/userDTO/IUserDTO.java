@@ -1,8 +1,8 @@
-package com.tp.testProject.user;
+package com.tp.testProject.userDTO;
 
 import java.sql.Date;
 
-public interface IUser {
+public interface IUserDTO {
 	String getUserId();
 	void setUserId(String userId);
 	String getUserPw();

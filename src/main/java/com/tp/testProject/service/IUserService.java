@@ -1,10 +1,10 @@
 package com.tp.testProject.service;
 
-import com.tp.testProject.user.User;
+import com.tp.testProject.userDTO.UserDTO;
 
 public interface IUserService {
-	public boolean userSignUp(final User user);
-	public User userSignIn(final User user);
-	public boolean userModify(final User user);
-	public boolean userDelete(final User user);
+	public boolean userSignUp(final UserDTO user);
+	public UserDTO userSignIn(final UserDTO user);
+	public boolean userModify(final UserDTO user);
+	public boolean userDelete(final UserDTO user);
 }

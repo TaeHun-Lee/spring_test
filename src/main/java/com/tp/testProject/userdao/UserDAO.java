@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.tp.testProject.user.User;
+import com.tp.testProject.userDTO.UserDTO;
 
 @Repository
 public class UserDAO implements IUserDAO {
@@ -26,28 +26,40 @@ public class UserDAO implements IUserDAO {
 	}
 	
 	@Override
-	public boolean checkUserInstance(final User user) {
-		boolean result = true;
+	public boolean checkUserInstance(final UserDTO user) {
+		boolean result = false;
 		String sql = "select EXISTS (select * from USER where userId=?) as success";
-		System.out.println("¿Ø¿˙ ¿ŒΩ∫≈œΩ∫ √º≈©");
-		switch (template.queryForInt(sql, user.getUserId())) {
-		case 1:
-			System.out.println("¿Ø¿˙ ¿ŒΩ∫≈œΩ∫ ¡∏¿Á");
-			result = false;
-			break;
+		System.out.println("Ïú†Ï†Ä Ïù∏Ïä§ÌÑ¥Ïä§ Ï≤¥ÌÅ¨");
+		List<Integer> res = template.query(sql, new PreparedStatementSetter() {
+			
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, user.getUserId());;
+			}
+		}, new RowMapper<Integer>() {
+
+			@Override
+			public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Integer result = rs.getInt(1);
+				return result;
+			}
+		});
+		System.out.println("Ï§ëÎ≥µÏ≤¥ÌÅ¨" + res.get(0));
+		if (res.get(0) == 0) {
+			result = true;
 		}
 		return result;
 	}
 
 	@Override
-	public boolean insertUser(final User user) {
+	public boolean insertUser(final UserDTO user) {
 		boolean result = false;
 		boolean duplicityCheck = checkUserInstance(user);
 		if(!duplicityCheck) {
 			return false;
 		}
 		String sql = "INSERT INTO USER(userId, userPw, userEmail, userAdd, userSignedDate) VALUES(?, ?, ?, ?, ?)";
-		System.out.println("DB ¿Œº≠∆Æ");
+		System.out.println("DB Ïù∏ÏÑúÌä∏");
 		int rs = template.update(sql, new PreparedStatementSetter() {
 
 			@Override
@@ -65,10 +77,10 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@Override
-	public boolean updateUser(final User user) {
+	public boolean updateUser(final UserDTO user) {
 		boolean result = false;
 		String sql = "UPDATE USER SET userPw=?, userEmail=?, userAdd=?, userSignedDate=? WHERE userId=?";
-		System.out.println("DB æ˜µ•¿Ã∆Æ");
+		System.out.println("DB ÏóÖÎç∞Ïù¥Ìä∏");
 		int rs = template.update(sql, new PreparedStatementSetter() {
 
 			@Override
@@ -86,10 +98,10 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@Override
-	public boolean deleteUser(final User user) {
+	public boolean deleteUser(final UserDTO user) {
 		boolean result = false;
 		String sql = "DELETE FROM USER WHERE userId=? AND userPW=?";
-		System.out.println("DB µÙ∏Æ∆Æ");
+		System.out.println("DB ÎîúÎ¶¨Ìä∏");
 		int rs = template.update(sql, new PreparedStatementSetter() {
 
 			@Override
@@ -104,10 +116,10 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@Override
-	public User selectUser(final String userId, final String userPw) {
+	public UserDTO selectUser(final String userId, final String userPw) {
 		String sql = "SELECT * FROM USER WHERE userId=? AND userPw=?";
-		System.out.println("DB ºø∑∫∆Æ");
-		List<User> selected = template.query(sql, new PreparedStatementSetter() {
+		System.out.println("DB ÏÖÄÎ†âÌä∏");
+		List<UserDTO> selected = template.query(sql, new PreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -115,11 +127,11 @@ public class UserDAO implements IUserDAO {
 				ps.setString(2, userPw);
 			}
 			
-		}, new RowMapper<User>() {
+		}, new RowMapper<UserDTO>() {
 
 			@Override
-			public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-				User user = new User();
+			public UserDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+				UserDTO user = new UserDTO();
 				user.setUserId(rs.getString("userId"));
 				user.setUserPw(rs.getString("userPw"));
 				user.setUserEmail(rs.getString("userEmail"));
@@ -134,16 +146,16 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@Override
-	public ArrayList<User> selectMultipleUser(final List<String> userIds) {
+	public ArrayList<UserDTO> selectMultipleUser(final List<String> userIds) {
 		String sql = "SELECT * FROM USER WHERE userId=?";
-		System.out.println("DB ∏÷∆º«√ ºø∑∫∆Æ");
-		ArrayList<User> selected = new ArrayList<User>();
+		System.out.println("DB ÔøΩÔøΩ∆ºÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ∆Æ");
+		ArrayList<UserDTO> selected = new ArrayList<UserDTO>();
 		while(!userIds.isEmpty()) {
-			User user = template.queryForObject(sql, new RowMapper<User>() {
+			UserDTO user = template.queryForObject(sql, new RowMapper<UserDTO>() {
 
 				@Override
-				public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-					User user = new User();
+				public UserDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+					UserDTO user = new UserDTO();
 					user.setUserId(rs.getString("userId"));
 					user.setUserPw(rs.getString("userPw"));
 					user.setUserEmail(rs.getString("userEmail"));
